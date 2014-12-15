@@ -73,6 +73,8 @@ defmodule Booter do
   alias Booter.Graph
   alias Booter.Error
 
+  @draw_graph true
+
   defmacro __using__(_opts) do
     quote do
       require Booter
@@ -129,6 +131,7 @@ defmodule Booter do
   @doc "Orders a list of boot steps"
   @spec ordered_steps([Step.t, ...]) :: [Step.t, ...]
   def ordered_steps(unordered_steps) do
+    if @draw_graph, do: GV.draw unordered_steps 
     case Graph.build_acyclic_graph(unordered_steps) do
       { :ok, graph } ->
         ordered_steps = for step_name <- :digraph_utils.topsort(graph) do
