@@ -131,7 +131,7 @@ defmodule Booter do
   @doc "Orders a list of boot steps"
   @spec ordered_steps([Step.t, ...]) :: [Step.t, ...]
   def ordered_steps(unordered_steps) do
-    if @draw_graph, do: GV.draw unordered_steps 
+    if @draw_graph, do: Task.async(fn -> GV.draw unordered_steps end)
     case Graph.build_acyclic_graph(unordered_steps) do
       { :ok, graph } ->
         ordered_steps = for step_name <- :digraph_utils.topsort(graph) do
